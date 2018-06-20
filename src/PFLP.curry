@@ -14,9 +14,11 @@ module PFLP
   , RT
   , pick
   , replicateDist
+  , distToList
   ) where
 
-import Findall (allValues)
+import Findall      (allValues)
+import SetFunctions (foldValues, mapValues, set0)
 
 infixl 1 >>>=
 infixr 1 ??
@@ -74,7 +76,7 @@ joinWith f d1 d2 = do
 filterDist :: (a -> Bool) -> Dist a -> Dist a
 filterDist p d | p (event d) = d
 
---- Queries a distribution for the probabilitiy of events that satisfy a given
+--- Queries a distribution for the probability of events that satisfy a given
 --- predicate.
 (??) :: (a -> Bool) -> Dist a -> Probability
 (??) p = foldr (+) 0.0 . allValues . prob . filterDist p
@@ -96,6 +98,12 @@ replicateDist :: Int -> RT (Dist a) -> Dist [a]
 replicateDist n rt
   | n == 0    = certainly []
   | otherwise = joinWith (:) (pick rt) (replicateDist (n - 1) rt)
+
+--- Transform a distribution into a list of event-probability pairs
+distToList :: Dist a -> [(a, Probability)]
+distToList dist =
+  foldValues (\xs ys -> xs ++ ys) []
+    $ mapValues (\(Dist v p) -> [(v, p)]) (set0 dist)
 
 instance Monad Dist where
   return = certainly
