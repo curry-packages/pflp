@@ -1,0 +1,7 @@
+import System.Random (randomRIO)
+
+import qualified Curry_Prelude as CP
+
+external_d_C_randomRIO :: CP.OP_Tuple2 CP.C_Float CP.C_Float -> Cover -> ConstStore 
+                       -> C_IO CP.C_Float
+external_d_C_randomRIO r _ _ = toCurry (randomRIO (fromCurry r) :: IO Double)
