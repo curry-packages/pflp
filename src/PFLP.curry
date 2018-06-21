@@ -14,11 +14,10 @@ module PFLP
   , RT
   , pick
   , replicateDist
-  , distToList
+  , partitionDist
   ) where
 
 import Findall      (allValues)
-import SetFunctions (foldValues, mapValues, set0)
 
 infixl 1 >>>=
 infixr 1 ??
@@ -32,7 +31,9 @@ type Probability = Float
 --- provided by this library, e.g., 'enum' and 'uniform'. Internally, Curry's
 --- built-in non-determinism is used to model distributions with more than one
 --- event-probability pair.
-data Dist a = Dist { event :: a, prob :: Probability }
+--- Since events can be filtered by applying predicates, a flag indicates
+--- whether an event is valid.
+data Dist a = Dist { event :: a, prob :: Probability, valid :: Bool }
   deriving Show
 
 member :: [a] -> a
@@ -44,7 +45,7 @@ member = foldr (?) failed
 enum :: [a] -> [Probability] -> Dist a
 enum xs ps
   | foldl (+) 0.0 ps' == 1.0 && all (> 0.0) ps'
-  = member (zipWith Dist xs ps')
+  = member (zipWith3 Dist xs ps' (repeat True))
   | otherwise
   = error ("PFLP.enum: probabilities do not add up to 1.0 " ++
              "or are not strictly positive")
@@ -58,13 +59,13 @@ uniform xs@(_:_) = enum xs (repeat (1.0 / fromInt (length xs)))
 
 --- Creates a single-event-distribution with probability `1.0`.
 certainly :: a -> Dist a
-certainly x = Dist x 1.0
+certainly x = Dist x 1.0 True
 
 --- Combines two (dependent) distributions.
 (>>>=) :: Dist a -> (a -> Dist b) -> Dist b
-d >>>= f = let Dist x p = d
-               Dist y q = f x
-           in Dist y (p * q)
+d >>>= f = let Dist x p v1 = d
+               Dist y q v2 = f x
+           in Dist y (p * q) (v1 && v2)
 
 --- Combines two (independent) distributions with respect to a given function.
 joinWith :: (a -> b -> c) -> Dist a -> Dist b -> Dist c
@@ -73,13 +74,15 @@ joinWith f d1 d2 = do
   y <- d2
   return (f x y)
 
-filterDist :: (a -> Bool) -> Dist a -> Dist a
-filterDist p d | p (event d) = d
+--- Partition a distribution by applying a given predicate to its events
+partitionDist :: (a -> Bool) -> Dist a -> Dist a
+partitionDist pred (Dist x p v) = Dist x p (v && pred x)
 
 --- Queries a distribution for the probability of events that satisfy a given
 --- predicate.
 (??) :: (a -> Bool) -> Dist a -> Probability
 (??) p = foldr (+) 0.0 . allValues . prob . filterDist p
+  where filterDist pred d | pred (event d) = d
 
 --- Run-time choice values. Currently, the only way to construct a run-time
 --- choice value is to explicitly use a lambda abstraction. The evaluation of
@@ -98,12 +101,6 @@ replicateDist :: Int -> RT (Dist a) -> Dist [a]
 replicateDist n rt
   | n == 0    = certainly []
   | otherwise = joinWith (:) (pick rt) (replicateDist (n - 1) rt)
-
---- Transform a distribution into a list of event-probability pairs
-distToList :: Dist a -> [(a, Probability)]
-distToList dist =
-  foldValues (\xs ys -> xs ++ ys) []
-    $ mapValues (\(Dist v p) -> [(v, p)]) (set0 dist)
 
 instance Monad Dist where
   return = certainly
