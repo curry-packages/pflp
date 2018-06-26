@@ -15,10 +15,13 @@ module PFLP
   , pick
   , replicateDist
   , partitionDist
+  , S
+  , SDist
   , sample
   , sampleDist
   ) where
 
+import List         (partition, sum)
 import Findall      (allValues)
 import FiniteMap    (addListToFM_C, emptyFM, fmToList)
 import SetFunctions (set0, values2list)
@@ -48,7 +51,7 @@ member = foldr (?) failed
 --- the relevant probabilities add up to `1.0` and are strictly positive.
 enum :: [a] -> [Probability] -> Dist a
 enum xs ps
-  | foldl (+) 0.0 ps' == 1.0 && all (> 0.0) ps'
+  | sum ps' == 1.0 && all (> 0.0) ps'
   = member (zipWith3 Dist xs ps' (repeat True))
   | otherwise
   = error ("PFLP.enum: probabilities do not add up to 1.0 " ++
@@ -85,7 +88,7 @@ partitionDist pred (Dist x p v) = Dist x p (v && pred x)
 --- Queries a distribution for the probability of events that satisfy a given
 --- predicate.
 (??) :: (a -> Bool) -> Dist a -> Probability
-(??) p = foldr (+) 0.0 . allValues . prob . filterDist p
+(??) p = sum . allValues . prob . filterDist p
   where filterDist pred d | pred (event d) = d
 
 --- Run-time choice values. Currently, the only way to construct a run-time
@@ -123,7 +126,7 @@ choose ::  Dist a -> S a
 choose d = do
   p  <- randomRIO (0.0, 1.0)
   ds <- values2list (set0 d)
-  return (scanP p ds)
+  return (scanP p (rescale ds))
 
 randomRIO :: (Float, Float) -> IO Float
 randomRIO external
@@ -133,6 +136,12 @@ scanP p ((Dist x q _):ds)
   | p <= q || null ds = x
   | otherwise         = scanP (p - q) ds
 scanP _ []            = error "PFLP.scanP: Distribution must be non-empty"
+
+rescale :: [Dist a] -> [Dist a]
+rescale ds = map (\(Dist x p v) -> Dist x (rv + p) v) vs
+  where
+  (vs, ivs) = partition valid ds
+  rv        = sum (map prob ivs) / fromInt (length vs)
 
 --- sampled distribution
 type SDist a = S [(a, Probability)]
