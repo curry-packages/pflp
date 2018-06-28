@@ -51,12 +51,13 @@ member = foldr (?) failed
 --- the relevant probabilities add up to `1.0` and are strictly positive.
 enum :: [a] -> [Probability] -> Dist a
 enum xs ps
-  | sum ps' == 1.0 && all (> 0.0) ps'
+  | 1.0 - sum ps' < eps && all (> 0.0) ps'
   = member (zipWith3 Dist xs ps' (repeat True))
   | otherwise
   = error ("PFLP.enum: probabilities do not add up to 1.0 " ++
              "or are not strictly positive")
  where ps' = take (length xs) ps
+       eps = 0.0001
 
 --- Creates a uniform distribution based on a given list of events. The list
 --- of events must be non-empty.
