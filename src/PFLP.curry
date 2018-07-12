@@ -15,7 +15,7 @@ module PFLP
   , pick
   , replicateDist
   , partitionDist
-  , S
+  , S (..)
   , SDist
   , sample
   , sampleDist
@@ -24,7 +24,8 @@ module PFLP
 import List         (partition, sum)
 import Findall      (allValues)
 import FiniteMap    (addListToFM_C, emptyFM, fmToList)
-import SetFunctions (set0, values2list)
+
+import Random
 
 infixl 1 >>>=
 infixr 1 ??
@@ -116,21 +117,24 @@ instance Monad Dist where
 
 -- Sampling of events and distributions
 
+type Seed = StdGen
+
 -- sampled event
-type S a = IO a
+data S a = S { runS :: Seed -> (a, Seed) }
+
+instance Monad S where
+  return x = S $ \s -> (x, s)
+  
+  m >>= f = S $ \s -> let (x, s') = runS m s
+                      in runS (f x) s'
 
 --- Create a sampled event
 sample :: (a -> Dist b) -> a -> S b
 sample f = choose . f
 
 choose ::  Dist a -> S a
-choose d = do
-  p  <- randomRIO (0.0, 1.0)
-  ds <- values2list (set0 d)
-  return (scanP p (rescale ds))
-
-randomRIO :: (Float, Float) -> IO Float
-randomRIO external
+choose d = S $ \s -> let (p, s') = randomP s
+                     in (scanP p (filter valid (allValues d)), s')
 
 scanP :: Probability -> [Dist a] -> a
 scanP p ((Dist x q _):ds)

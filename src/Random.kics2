@@ -1,0 +1,16 @@
+import System.Random (StdGen, newStdGen, split, randomR)
+
+import qualified Curry_Prelude as CP
+
+type C_StdGen = PrimData StdGen
+
+external_d_C_newStdGen :: Cover -> ConstStore -> C_IO C_StdGen
+external_d_C_newStdGen _ _ = toCurry newStdGen
+
+external_d_C_split :: C_StdGen -> Cover -> ConstStore
+                   -> CP.OP_Tuple2 C_StdGen C_StdGen
+external_d_C_split (PrimData g) _ _ = toCurry (split g)
+
+external_d_C_randomP :: C_StdGen -> Cover -> ConstStore 
+                     -> CP.OP_Tuple2 CP.C_Float C_StdGen
+external_d_C_randomP (PrimData g) _ _ = toCurry (randomR (0.0, 1.0) g :: (Double, StdGen))
