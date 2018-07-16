@@ -18,6 +18,7 @@ module PFLP
   , S (..)
   , SDist
   , sample
+  , choose
   , sampleDist
   ) where
 
@@ -120,21 +121,21 @@ instance Monad Dist where
 type Seed = StdGen
 
 -- sampled event
-data S a = S { runS :: Seed -> (a, Seed) }
+data S a = S { runS :: Seed -> a }
 
+-- TODO: Use MonadState
 instance Monad S where
-  return x = S $ \s -> (x, s)
+  return x = S $ const x
   
-  m >>= f = S $ \s -> let (x, s') = runS m s
-                      in runS (f x) s'
+  m >>= f = S $ \s -> let (s1, s2) = split s
+                      in runS (f (runS m s1)) s2
 
 --- Create a sampled event
 sample :: (a -> Dist b) -> a -> S b
 sample f = choose . f
 
 choose ::  Dist a -> S a
-choose d = S $ \s -> let (p, s') = randomP s
-                     in (scanP p (filter valid (allValues d)), s')
+choose d = S $ \s -> scanP (random s) (rescale (allValues d))
 
 scanP :: Probability -> [Dist a] -> a
 scanP p ((Dist x q _):ds)

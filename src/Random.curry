@@ -10,3 +10,6 @@ split external
 
 randomP :: StdGen -> (Float, StdGen)
 randomP external
+
+random :: StdGen -> Float
+random = fst . randomP
