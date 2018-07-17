@@ -1,6 +1,6 @@
 --- Library for Probabilistic Functional Logic Programming
 --- @author Sandra Dylus, Jan Christiansen, Finn Teegen, Jan Tikovsky
---- @version June 2018
+--- @version July 2018
 
 module PFLP
   ( Probability
@@ -15,16 +15,13 @@ module PFLP
   , pick
   , replicateDist
   , partitionDist
+  , Seed
   , S (..)
-  , SDist
   , sample
-  , choose
-  , sampleDist
   ) where
 
-import List         (partition, sum)
-import Findall      (allValues)
-import FiniteMap    (addListToFM_C, emptyFM, fmToList)
+import List    (partition, sum)
+import Findall (allValues)
 
 import Random
 
@@ -123,19 +120,14 @@ type Seed = StdGen
 -- sampled event
 data S a = S { runS :: Seed -> a }
 
--- TODO: Use MonadState
 instance Monad S where
   return x = S $ const x
   
   m >>= f = S $ \s -> let (s1, s2) = split s
                       in runS (f (runS m s1)) s2
 
---- Create a sampled event
-sample :: (a -> Dist b) -> a -> S b
-sample f = choose . f
-
-choose ::  Dist a -> S a
-choose d = S $ \s -> scanP (random s) (rescale (allValues d))
+sample ::  Dist a -> S a
+sample d = S $ \s -> scanP (random s) (rescale (allValues d))
 
 scanP :: Probability -> [Dist a] -> a
 scanP p ((Dist x q _):ds)
@@ -148,17 +140,3 @@ rescale ds = map (\(Dist x p v) -> Dist x (rv + p) v) vs
   where
   (vs, ivs) = partition valid ds
   rv        = sum (map prob ivs) / fromInt (length vs)
-
---- sampled distribution
-type SDist a = S [(a, Probability)]
-
-toSDist :: Ord a => [S a] -> SDist a
-toSDist xs = sequence xs >>= return . norm . map (\x -> (x, 1.0 / fromInt len))
-  where len = length xs
-
-norm :: Ord a => [(a, Probability)] -> [(a, Probability)]
-norm = fmToList . addListToFM_C (+) (emptyFM (<))
-
---- Create a sampled distribution for a given probalistic function
-sampleDist :: Ord b => Int -> (a -> Dist b) -> a -> SDist b
-sampleDist n f = toSDist . replicate n . sample f
