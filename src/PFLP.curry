@@ -41,7 +41,7 @@ member = foldr (?) failed
 --- the relevant probabilities add up to `1.0` and are strictly positive.
 enum :: [a] -> [Probability] -> Dist a
 enum xs ps
-  | foldl (+) 0.0 ps' == 1.0 && all (> 0.0) ps'
+  | 1.0 - (foldl (+) 0.0 ps') < 0.0001 && all (> 0.0) ps'
   = member (zipWith Dist xs ps')
   | otherwise
   = error ("PFLP.enum: probabilities do not add up to 1.0 " ++
