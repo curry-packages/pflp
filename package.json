@@ -10,11 +10,11 @@
   "sourceDirs" : [ "src" ],
   "exportedModules": [ "PFLP" ],
   "dependencies": {
-    "searchtree" : ">= 1.0.0"
+    "searchtree" : ">= 1.0.0, < 2.0.0"
   },
   "compilerCompatibility": {
-    "kics2": ">= 2.0.0",
-    "pakcs": ">= 2.0.0"
+    "kics2": ">= 2.0.0, < 3.0.0",
+    "pakcs": ">= 2.0.0, < 3.0.0"
   },
   "source": {
     "git": "https://github.com/finnteegen/pflp.git",
