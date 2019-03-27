@@ -10,6 +10,7 @@
   "sourceDirs" : [ "src" ],
   "exportedModules": [ "PFLP" ],
   "dependencies": {
+    "searchtree" : ">= 1.0.0"
   },
   "compilerCompatibility": {
     "kics2": ">= 2.0.0",
