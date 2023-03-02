@@ -1,6 +1,6 @@
 {
   "name": "pflp",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": "Sandra Dylus <sad@informatik.uni-kiel.de>, Jan Christiansen <jan.christiansen@hs-flensburg.de>, Finn Teegen <fte@informatik.uni-kiel.de>",
   "maintainer": "Finn Teegen <fte@informatik.uni-kiel.de>",
   "synopsis": "Library for Probabilistic Functional Logic Programming",
@@ -10,11 +10,11 @@
   "sourceDirs" : [ "src" ],
   "exportedModules": [ "PFLP" ],
   "dependencies": {
-    "searchtree" : ">= 1.0.0, < 2.0.0"
+    "searchtree" : ">= 3.0.0, < 4.0.0"
   },
   "compilerCompatibility": {
-    "kics2": ">= 2.0.0, < 3.0.0",
-    "pakcs": ">= 2.0.0, < 3.0.0"
+    "kics2": ">= 3.0.0, < 4.0.0",
+    "pakcs": ">= 3.0.0, < 4.0.0"
   },
   "source": {
     "git": "https://github.com/finnteegen/pflp.git",
