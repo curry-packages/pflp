@@ -10,14 +10,11 @@
   "sourceDirs" : [ "src" ],
   "exportedModules": [ "PFLP" ],
   "dependencies": {
+    "base"       : ">= 3.0.0, < 4.0.0",
     "searchtree" : ">= 3.0.0, < 4.0.0"
   },
-  "compilerCompatibility": {
-    "kics2": ">= 3.0.0, < 4.0.0",
-    "pakcs": ">= 3.0.0, < 4.0.0"
-  },
   "source": {
-    "git": "https://github.com/finnteegen/pflp.git",
+    "git": "https://github.com/curry-packages/pflp.git",
     "tag": "$version"
   }
 }
