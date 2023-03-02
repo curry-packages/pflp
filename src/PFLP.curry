@@ -16,7 +16,7 @@ module PFLP
   , replicateDist
   ) where
 
-import Control.Findall (allValues)
+import Control.AllValues (allValues)
 
 infixl 1 >>>=
 infixr 1 ??

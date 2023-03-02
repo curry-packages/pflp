@@ -11,7 +11,7 @@
   "exportedModules": [ "PFLP" ],
   "dependencies": {
     "base"       : ">= 3.0.0, < 4.0.0",
-    "searchtree" : ">= 3.0.0, < 4.0.0"
+    "allvalues"  : ">= 3.0.0, < 4.0.0"
   },
   "source": {
     "git": "https://github.com/curry-packages/pflp.git",
