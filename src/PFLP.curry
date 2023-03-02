@@ -97,6 +97,13 @@ replicateDist n rt
   | n == 0    = certainly []
   | otherwise = joinWith (:) (pick rt) (replicateDist (n - 1) rt)
 
+instance Functor Dist where
+  fmap f (Dist x p) = Dist (f x) p
+
+instance Applicative Dist where
+  pure  = certainly
+  (<*>) = joinWith ($)
+
 instance Monad Dist where
   return = certainly
   (>>=)  = (>>>=)
