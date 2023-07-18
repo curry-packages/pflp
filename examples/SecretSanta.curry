@@ -2,7 +2,7 @@
    if you did not install the package using CPM. -}
 
 import PFLP
-import List (delete)
+import Data.List (delete)
 
 {- source: https://youtu.be/5kC5k5QBqcc
    Thanks to @sebfisch for the idea -}

@@ -2,7 +2,6 @@
    if you did not install the package using CPM. -}
 
 import PFLP
-import Float
 
 {- source: https://dtai.cs.kuleuven.be/problog/tutorial/various/04_nampally.htm
 
@@ -42,7 +41,7 @@ testQuery2 n = (id . fst) ?? stringWithBB n
 -- P (A \cap B)
 testQuery3 n = id ?? (randomString n >>>= \str -> certainly (palindrome str && twoBs str))
 -- P (A | B) = P (A \cap B) / P(B)
-testQuery4 n = testQuery3 n /. testQuery1 n
+testQuery4 n = testQuery3 n / testQuery1 n
 
-testQuery5 n = ((\ (x,y) -> x && y) ?? q) /. ((id . fst) ?? q)
+testQuery5 n = ((\ (x,y) -> x && y) ?? q) / ((id . fst) ?? q)
  where q = randomString n >>>= \str -> certainly (palindrome str, twoBs str)

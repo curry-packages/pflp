@@ -1,10 +1,9 @@
 import PFLP
-import Float
 
 {- Wet grass example -}
 
 flip :: Probability -> Dist Bool
-flip p = enum [True,False] [p, 1 -. p]
+flip p = enum [True,False] [p, 1 - p]
 
 rain :: Dist Bool
 rain = flip 0.2
@@ -42,10 +41,10 @@ grassCondProb :: [GrassModel -> Bool] -> Probability
 grassCondProb ps = condProb ps grassModel
 
 rainWhenGrassWet :: Probability
-rainWhenGrassWet = grassCondProb [g_, r_] /. grassCondProb [g_]
+rainWhenGrassWet = grassCondProb [g_, r_] / grassCondProb [g_]
 
 sprinklerWhenGrassWet :: Probability
-sprinklerWhenGrassWet = grassCondProb [g_, s_] /. grassCondProb [g_]
+sprinklerWhenGrassWet = grassCondProb [g_, s_] / grassCondProb [g_]
 
 
 {- more type-safe wet grass example -}
