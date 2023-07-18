@@ -14,7 +14,7 @@ First of all, make sure that your local package index is up-to-date.
 
     cypm update
 
-You can then add `pflp` as a dependency to your own package. If you're currently not working in a package, this command will add `pflp` as a dependency to your distribution's home package instead. See the [CPM manual](http://www-ps.informatik.uni-kiel.de/currywiki/_media/tools/cpm/manual.pdf) for details. 
+You can then add `pflp` as a dependency to your own package. If you're currently not working in a package, this command will add `pflp` as a dependency to your distribution's home package instead. See the [CPM manual](https://www-ps.informatik.uni-kiel.de/currywiki/_media/tools/cpm/manual.pdf) for details. 
 
     cypm add --dependency pflp
 
