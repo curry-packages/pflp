@@ -1,6 +1,6 @@
 --- Library for Probabilistic Functional Logic Programming
 --- @author Sandra Dylus, Jan Christiansen, Finn Teegen, Jan Tikovsky
---- @version June 2018
+--- @version October 2024
 
 module PFLP
   ( Probability
@@ -16,7 +16,7 @@ module PFLP
   , replicateDist
   ) where
 
-import Control.AllValues (allValues)
+import Control.Search.Unsafe (allValues)
 
 infixl 1 >>>=
 infixr 1 ??
