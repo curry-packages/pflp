@@ -1,12 +1,12 @@
 
 # Probabilistic Functional Logic Programming (PFLP)
 
-PFLP is a library for probabilistic programming in the functional logic programming language [Curry](https://www-ps.informatik.uni-kiel.de/currywiki/).
+PFLP is a library for probabilistic programming in the functional logic programming language [Curry](https://www.curry-lang.org/).
 The library is based on the ideas presented in the paper [Probabilistic Functional Logic Programming](https://www-ps.informatik.uni-kiel.de/~sad/padl2018-preprint.pdf).
 
 ## Installation
 
-This library can either be installed using the Curry package manager [CPM](https://www-ps.informatik.uni-kiel.de/currywiki/tools/cpm) which is already part of recent distributions of the Curry systems [PAKCS](https://www.informatik.uni-kiel.de/~pakcs/index.html) and [KiCS2](https://www-ps.informatik.uni-kiel.de/kics2/), or it can be directly downloaded.
+This library can either be installed using the Curry package manager [CPM](http://www.curry-lang.org/tools/cpm) which is already part of recent distributions of the Curry systems [PAKCS](https://www.curry-lang.org/pakcs/) and [KiCS2](https://www.curry-lang.org/kics2/), or it can be directly downloaded.
 
 ### Via CPM
 
@@ -14,7 +14,7 @@ First of all, make sure that your local package index is up-to-date.
 
     cypm update
 
-You can then add `pflp` as a dependency to your own package. If you're currently not working in a package, this command will add `pflp` as a dependency to your distribution's home package instead. See the [CPM manual](https://www-ps.informatik.uni-kiel.de/currywiki/_media/tools/cpm/manual.pdf) for details. 
+You can then add `pflp` as a dependency to your own package. If you're currently not working in a package, this command will add `pflp` as a dependency to your distribution's home package instead. See the [CPM manual](https://cpm.curry-lang.org/DOC/cpm-3.3.0/manual.pdf) for details. 
 
     cypm add --dependency pflp
 
